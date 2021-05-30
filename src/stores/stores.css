@@ -1,0 +1,62 @@
+body {
+    min-width: 250px;
+  }
+
+  label {
+    margin: 5px;
+    color: rgb(45, 100, 136);
+  }
+
+  button {
+    color: rgb(45, 100, 136);
+  }
+  span{
+    text-align: center;
+    font-size:26px;
+    background-color: aquamarine;
+    color: rgb(16, 109, 170);
+    /*The change*/
+    display:inline-block; /*or display:block;*/
+}
+  /* Include the padding and border in an element's total width and height */
+  * {
+    box-sizing: border-box;
+  }
+  
+  /* Remove margins and padding from the list */
+  ul {
+    margin: 10px;
+    padding: 0px;
+  }
+  
+  /* Style the list items */
+  ul li, .imageItem, .imageItemOdd {
+    cursor: pointer;
+    padding: 6px 8px 6px 8px;
+    font-size: 50;
+    list-style-type: none;
+    background: rgb(255, 255, 255);
+    transition: 0.2s;
+    
+    /* make the list items unselectable */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  img {
+    margin: 5px;
+    border-radius: 100%;
+    object-fit: cover;
+  }
+  
+  /* Set all odd list items to a different color (zebra-stripes) */
+  ul li:nth-child(odd), .imageItemOdd {
+    background: #999;
+  }
+  
+  /* Darker background-color on hover */
+  ul li:hover, .imageItem:hover, .imageItemOdd:hover {
+    background: #ddd;
+  }

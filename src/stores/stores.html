@@ -1,0 +1,64 @@
+<html>
+
+<head>
+    <script type="text/javascript" src="/src/stores/stores.js"></script>
+    <link href="/src/stores/stores.css" rel="stylesheet" type="text/css">
+</head>
+
+<body onload="bodyLoaded()">
+    <div>
+        <img src="/res/stores.png" alt="foods" width="50" height="50">
+        <span> NTU stores </span>
+    </div> <br>
+
+    <div>
+        <label>Conditions are as follow :</label> <button id='queryData'>select</button> <br>
+        <label for="places">Places：</label>
+        <select name="places" id="places">
+            <option value="-1">default</option>
+            <option value="0">水源市場到師大分部</option>
+            <option value="1">水源市場到正門</option>
+            <option value="2">正門到台電大樓</option>
+            <option value="3">溫州街</option>
+            <option value="4">辛亥路118巷（後門）</option>
+            <option value="5">台大學餐</option>
+            <option value="6">台科大學餐</option>
+            <option value="7">長興街</option>
+        </select>
+        <label for="types"> Types：</label>
+        <select name="types" id="types">
+            <option value="-1">default</option>
+            <option value="0">中式</option>
+            <option value="1">西式</option>
+            <option value="2">台式</option>
+            <option value="3">美式</option>
+            <option value="4">港式</option>
+            <option value="5">韓式</option>
+            <option value="6">日式</option>
+            <option value="7">東南亞料理</option>
+            <option value="8">南洋料理</option>
+            <option value="9">中東料理</option>
+            <option value="10">雲南料理</option>
+        </select>
+        <label for="budgets"> Budgets (NTD):</label>
+        <select name="budgets" id="budgets">
+            <option value="-1">default</option>
+            <option value="0">less than 100</option>
+            <option value="1">100~200</option>
+            <option value="2">200~300</option>
+            <option value="3">300~500</option>
+            <option value="4">more than 500</option>
+        </select>
+    </div> <br>
+
+    <label id="total">Total stores :</label>
+
+    <div id="storesList">
+        <div class="imageItemOdd"><img class="image-cropper" src="/res/foods.png" alt="foods" width="50"
+                height="50">store1</div>
+        <div class="imageItem"><img class="image-cropper" src="/res/foods.png" alt="foods" width="50"
+            height="50">store2</div>
+    </div>
+</body>
+
+</html>
