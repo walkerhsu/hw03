@@ -1,3 +1,0 @@
-function bodyLoaded() {
-    console.log()
-}

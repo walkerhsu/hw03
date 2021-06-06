@@ -1,5 +1,4 @@
-let queryStores = {}
-let iterator = 0
+let Stores = {}
 let options = {
     place: -1,
     type: -1,
@@ -17,9 +16,7 @@ function bodyLoaded() {
         console.log(options.place,' ',options.type,' ',options.budget)
 
         queryNTUStores(options, function(queryStores) {
-            console.log('this is a callback function')
-
-
+            Stores = [...queryStores]
             let element = document.getElementById('total') 
             element.textContent = 'Total stores corresponding with the conditions : ' + queryStores.length
             var div = document.getElementById('storesList')
@@ -35,8 +32,35 @@ function bodyLoaded() {
         
     })
 }
-function detailPageLoaded() {
 
+function detailPageLoaded() {
+    var currentStoreNumber = 0
+    let options = {
+        place: -1,
+        type: -1,
+        budget: -1
+    }
+
+    try{
+        currentStoreNumber = parseInt(localStorage['iterator'])
+        var data = localStorage['options']
+        options = JSON.parse(data)
+        
+        console.log(options)
+        console.log(currentStoreNumber)
+
+        localStorage.clear();
+    }catch{
+        currentStoreNumber = 0
+    }
+    //console.log(currentStoreNumber)
+
+    queryNTUStores(options , function(queryStores) {
+        //console.log(queryStores[0][0])
+        Stores = [...queryStores]
+
+        changeHtml(currentStoreNumber)
+    })
 }
 
 function removeAllChildNodes(parent) {
@@ -48,7 +72,6 @@ function removeAllChildNodes(parent) {
 
 function getOptionValues() {
     let e = document.getElementById("places")
-    
     options.place = e.value
 
     e = document.getElementById("types")
@@ -77,6 +100,7 @@ function queryNTUStores(opt , callback) {
 }
 
 function addChildImageNode(parent, value, Img, isOdd, number) {
+    console.log(Stores.length)
     let div1 = document.createElement("div")
     let img = document.createElement("img")
     let txt = document.createTextNode(value)
@@ -88,14 +112,66 @@ function addChildImageNode(parent, value, Img, isOdd, number) {
     img.height = 50
 
     div1.onclick = function (e) {
+        var currentNumber = 0
+        //console.log(Stores.length)
+        for(var i = 0; i < Stores.length; i++) {
+            //console.log(Stores[i][0])
+            if(e.target.textContent === Stores[i][0]) {
+                currentNumber = i
+                break
+            }
+        }
+        console.log(currentNumber)
         // todo, show detail page
-        let target = e.target
-        iterator = number
-        console.log(iterator)
-        //window.location.href = '/stores/details'
+        localStorage.setItem('iterator',currentNumber)
+        localStorage.setItem("options",JSON.stringify(options))
+        window.location.href = '/stores/details'
     }
 
     div1.appendChild(img)
     div1.appendChild(txt)
     parent.appendChild(div1)
+}
+
+function changeHtml(number) {
+    //console.log(number)
+    document.getElementById('image').src = '/res/foods/' + Stores[number][12]
+    document.getElementById('store').textContent = Stores[number][0]
+    document.getElementById('place').textContent = 'Place : ' + Stores[number][1]
+    document.getElementById('budget').textContent = 'Budget : ' + Stores[number][4]
+    document.getElementById('staple').textContent = 'Staple : ' + Stores[number][6]
+    document.getElementById('price').textContent = 'Price : ' + Stores[number][3]
+    document.getElementById('capacity').textContent = 'Capacity : ' + Stores[number][10]
+    document.getElementById('address').textContent = 'Address : ' + Stores[number][2]
+    document.getElementById('time').textContent = 'Operating time : ' + Stores[number][11]
+    
+    let text = ''
+    let span = document.getElementById('button')
+    
+    if(number > 0) {
+        text += '<button id = previous>PREV</button>'
+    }
+    if(number != (Stores.length)-1) {
+        text += '<button id = following>NEXT</button>'
+        
+    }
+    span.innerHTML = text
+    var previousStore = null
+    var followingStore = null
+
+    previousStore = document.getElementById('previous')
+    if(previousStore !== null) {
+        previousStore.onclick = function(){
+            var previousStoreNumber = number - 1
+            changeHtml(previousStoreNumber)
+        }
+    }
+    
+    followingStore = document.getElementById('following')
+    if(followingStore !== null) {
+        followingStore.onclick = function(){
+            var followingStoreNumber = number + 1
+            changeHtml(followingStoreNumber)
+        }
+    }
 }

@@ -1,32 +1,39 @@
 <html>
 
 <head>
-    <script type="text/javascript" src="/src/stores.js"></script>
+    <script type="text/javascript" src="/src/stores/stores.js"></script>
     <link href="/src/stores/details/details.css" rel="stylesheet" type="text/css">
 </head>
 
 <body onload = "detailPageLoaded()">
     
     <div>
-        <img src="/res/foods.png" alt="food" width="50" height="50">
-        <span> store name </span>
+        <img src="/res/foods.png" id = image alt="food" >
+        <span id = 'store'> store name </span>
         
     </div> <br>
 
     <div>
-        <span id = place> where is it? </span> <br>
-        <span id = budget> what's the budget?</span> <br>
-        <span id = staple> what's the staple?</span>
-        <span id = cost> what's the cost?</span> <br>
-        <span id = capacity> what's the capacity?</span> <br>
-        <span id = location> what's the location?</span> <br>
-        <span id = operation> when is it open?</span> <br>
+        <span id = 'place'></span> <br>
+        <span id = 'budget'></span> <br>
+        <span id = 'staple'></span> <br>
+        <span id = 'price'></span> <br>
+        <span id = 'capacity'></span> <br>
+        <span id = 'address'></span> <br>
+        <span id = 'time'></span> <br>
     </div>
-    
-    <span>
-        <button>the previous store : </button>
-        <button>the following store :  </button>
-    </span>
+    <!--
+        <div>
+            <span id = 'place'> where is it? </span> <br>
+            <span id = 'budget'> what's the budget?</span> <br>
+            <span id = 'staple'> what's the staple?</span> <br>
+            <span id = 'price'> what's the price?</span> <br>
+            <span id = 'capacity'> what's the capacity?</span> <br>
+            <span id = 'address'> what's the location?</span> <br>
+            <span id = 'time'> when is it open?</span> <br>
+        </div>
+    -->
+    <span id = 'button'></span>
 </body>
 
 </html>

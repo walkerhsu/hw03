@@ -1,0 +1,44 @@
+body {
+    min-width: 250px;
+}
+
+label {
+    color: rgb(45, 100, 136);
+}
+
+input {
+    color: rgb(45, 100, 136);
+    margin-top: 5px;
+}
+
+span {
+    color: rgb(170, 16, 24);
+    font-size: 24px;
+    padding: 3px;
+    vertical-align: top;
+}
+
+select {
+    width: 100px;
+}
+
+/* added for border-box */
+* {
+  box-sizing: border-box;
+}
+
+.column {
+  float: left;
+  width: 20%;
+  padding: 5px;
+}
+
+/* Clearfix (clear floats) */
+.row::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+.imgsrc {
+    width: 100%;
+}

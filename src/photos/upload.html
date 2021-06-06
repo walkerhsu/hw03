@@ -1,0 +1,26 @@
+<html>
+    <head>
+        <link href = '/src/photos/upload.css' rel='stylesheet' type='text.css'>
+        <script type = 'text/javascript' src='/src/photos/upload.js'></script>
+    </head>
+
+    <body onload = 'uploadLoaded()'>
+        <div> 
+            <img src='/res/upload.png' alt = 'upload' width='40' height = '40'>
+            <span>Photos upload</span>
+        </div>
+
+        <form id = 'form-upload' enctype = 'multipart/form-data' action = '/photos/upload' method = 'post'> 
+            <div>
+                <input type='file' name = 'photo' onchange = 'loadFile(event)'>
+                <div class = 'form-group'>
+                    <label> 相片集編號 </label> <br>
+                    <textarea name = 'albumid' id='albumid' rows='1' cols='8'></textarea> <br>
+                    <label> 相片簡介 </label> <br>
+                    <textarea name = 'caption' rows = '1' cols = '20'></textarea>
+                </div>
+                <input type='submit' value='input'> <br>
+                <img id='imgSrc'> <br>
+            </div>
+    </body>
+</html>

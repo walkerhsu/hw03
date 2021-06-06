@@ -1,0 +1,27 @@
+<html>
+    <head>
+        <link href = '/src/photos/album.css' rel='stylesheet' type='text/css'>
+        <script type = 'text/javascript' src='/src/photos/album.js'></script>
+    </head>
+
+    <body onload = 'albumLoaded()'>
+        <div> 
+            <img src='/res/album.png' alt = 'album' width='40' height = '40'>
+            <span>Albums</span>
+        </div>
+
+        <div>
+            <label for='select_albumid'> 相片集編號： </label>
+            <select id='select_albumid' name='albumid'>
+                <!--
+                    <option value='0'></option>
+                    <option value='1'></option>
+                -->
+            </select>
+        </div>
+
+        <div id='imgContainer'>
+
+        </div>
+    </body>
+</html>

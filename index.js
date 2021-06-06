@@ -1,24 +1,12 @@
 //https://www.tutorialsteacher.com/nodejs/expressjs-web-application (webapp's step-by-step tutorial)
 //https://www.tutorialspoint.com/http/http_methods.htm  (HTTP request methods)
-//  database columns definition
-//  0: store (餐廳名字)
-//  1: place (區域, 公館、118、學餐、溫州街...)
-//  2: address (詳細地址)
-//  3: price (價位: 平均數)
-//  4: budget(預算, $:0-100 $$:101-200 $$$:201-300 $$$$:301-500 $$$$$:501+)
-//  5: type (菜色類別: 中式、日式、韓式...)
-//  6: staple (主食, 飯、麵、水餃)
-//  7: dishes (菜色： 米食、麵食、鍋物、排餐、輕食...)
-//  8: meat (葷/有提供素食/全素)  
-//  9: seat (有無內用座位: 有/無) 
-// 10: capacity (可容納人數數字，很多的話就寫10+))
-// 11: time (營業時間)
-// 12: image (示意圖檔)
-// 13: suggestion (天氣冷熱)
+
 var express = require('express')
-const qs = require('querystring')
 const fs = require('fs')
-const csv = require('csv')
+const qs = require('querystring')
+const multer = require('multer')
+const {queryStores} = require('./src/api/storesApi.js') 
+const {insertPhoto,queryAlbumIds} = require('./src/api/photosApi.js')
 
 var app = express()
 
@@ -38,97 +26,18 @@ app.get('/stores/', function (req, res) {
     res.sendFile(__dirname + '/src/stores/' + 'stores.html');
 });
 
-const allStores = []
-let filterStores = []
-const fsPromises = fs.promises
+app.get('/upload/', function (req, res) {
+    console.log(req.url);
+    res.sendFile(__dirname + '/src/photos/' + 'upload.html');
+});
 
-async function readDataBase() {
-    try {
-        const inputfile = __dirname + '/database/ntufoods.csv'
-        const input = await fsPromises.readFile(inputfile)
-
-        const parser = csv.parse({
-            delimiter: ','
-        })
-
-        parser.on('readable', function () {
-            while (record = parser.read()) allStores.push(record)
-        })
-
-        parser.on('error', (err) => console.error(err.message))
-
-        parser.on('end', () => console.log('total stores from database:', allStores.length))
-
-        parser.write(input)
-
-        parser.end()
-    } catch (error) {
-        console.log('error', error)
-    }
-}
-readDataBase()
-
-const place_list = ["水源市場到師大分部", "水源市場到正門", "正門到台電大樓", "溫州街", "118", "台大學餐", "台科大學餐", "長興"]
-const types_list = ["中式", "西式", "台式", "美式", "港式", "韓式", "日式", "東南亞料理", "南洋料理", "中東料理", "雲南料理"]
-const budgets_list = ["$", "$$", "$$$", "$$$$", "$$$$$"]
-
-function filterPlaces(value) {
-    let condition = place_list[parseInt(value)]
-    return filterStores.filter(store => store[1] === condition)
-}
-function filterTypes(value) {
-    let condition = types_list[parseInt(value)]
-
-    return filterStores.filter(store => {
-        let separateArray = store[5].split(' ')
-        //console.log(separateArray)
-        var bool = false
-        for (var i = 0; i < separateArray.length; i++) {
-            if (separateArray[i] === condition) {
-                bool = true
-                break
-            }
-        }
-        return bool
-    })
-}
-function filterBudgets(value) {
-    let condition = budgets_list[parseInt(value)]
-
-    return filterStores.filter(store => {
-        let separateArray = store[4].split(' ')
-        console.log(separateArray)
-        var bool = false
-        for (var i = 0; i < separateArray.length; i++) {
-            if (separateArray[i] === condition) {
-                bool = true
-                break
-            }
-        }
-        return bool
-    })
-
-}
-
-function queryStores(opts) {
-    if (opts.place && opts.place >= 0) {
-        filterStores = filterPlaces(opts.place)
-    }
-    console.log(filterStores.length)
-    if (opts.type && opts.type >= 0) {
-        filterStores = filterTypes(opts.type)
-    }
-    
-    if (opts.budget && opts.budget >= 0) {
-        filterStores = filterBudgets(opts.budget)
-    }
-    console.log(filterStores.length)
-    return filterStores
-}
+app.get('/album', function (req, res) {
+    console.log(req.url)
+    res.sendFile(__dirname + '/src/photos/' + 'album.html');
+});
 
 app.get('/stores/api', function (req, res) {
     console.log(req.url);
-    filterStores = [...allStores]
     try {
         const querystr = req.url.replace('/stores/api?', '')
         const opts = qs.parse(querystr)
@@ -141,6 +50,21 @@ app.get('/stores/api', function (req, res) {
     }
 })
 
+app.get('/photos/album/api', function (req, res) {
+    console.log(req.url);
+    try {
+        const querystr = req.url.replace('/photos/album/api?', '')
+        const rec = qs.parse(querystr)
+        //console.log(opts)
+        queryAlbumIds(rec, (response) => {
+            //console.log(response)
+            res.json(response)
+        })
+    } catch (error) {
+        console.error(error.message)
+    }
+})
+
 app.get('/stores/details/', function (req, res) {
     console.log(req.url);
     res.sendFile(__dirname + '/src/stores/details' + '/details.html' )
@@ -150,6 +74,48 @@ app.get('/*', function (req, res) {
     console.log(req.url);
     res.sendFile(__dirname + '/' + req.url);
 });
+
+let record = {
+    no: -1,                     // is assigned as Date.now()
+    albumid: '',                // default current date, but user can change it while submiting photo
+    caption: '',                // given by user
+    path: ''                    // file name saved in backend
+}
+
+let storage = multer.diskStorage({
+    destination: function (req, file, callback) {
+        let dir =  __dirname + '/database/photos'
+        if (!fs.existsSync(dir)){
+            fs.mkdirSync(dir)
+        }
+        // invoke next handler    
+        callback(null, dir)
+    },
+
+    filename: function (req, file, callback) {
+        record.no = Date.now()
+        let seperators = file.originalname.split('.') 
+        record.path = `${seperators[0]}_${record.no}.${seperators[1]}`  //i.e. 'abc.jpg' as 'abc_67597243572345.jpg"
+        // invoke next handler   
+        callback(null, record.path)
+    }
+})
+let upload = multer({ storage: storage })
+
+//passing multer as middleware
+app.post('/photos/upload', upload.any(), function (req, res) {
+    if (req.body) {
+        record.albumid = req.body.albumid
+        record.caption = req.body.caption
+        console.log(`Upload successfully: album id is ${req.body.albumid} , caption is ${req.body.caption}` )
+        insertPhoto(record)
+
+        //redirect to album page after upload compeletes
+        res.sendFile(__dirname + '/src/photos/' + 'album.html')
+    } 
+})
+
+
 var server = app.listen(5000, function () {
     console.log('Node server is running..');
 });
